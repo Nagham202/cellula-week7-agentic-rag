@@ -1,0 +1,8 @@
+qdrant-client
+fastembed
+pypdf
+python-docx
+langchain-core
+langchain-text-splitters
+python-dotenv
+pytest

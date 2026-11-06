@@ -1,0 +1,13 @@
+# Python
+.venv/
+__pycache__/
+*.pyc
+
+# Secrets
+.env
+
+# Local database (each person builds their own)
+data/qdrant/
+
+# macOS
+.DS_Store
