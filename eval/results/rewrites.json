@@ -1,0 +1,226 @@
+{
+  "Which two ways of combining the retrieved documents does the paper propose?": {
+    "query": "Which two ways of combining the retrieved documents does the paper propose?",
+    "alternatives": [
+      "What are the two methods for combining retrieved documents described in the paper?",
+      "Which two approaches to merging retrieved documents are suggested by the paper?"
+    ],
+    "rewritten": true
+  },
+  "Which model is used to find the documents?": {
+    "query": "Which model is used to find the documents?",
+    "alternatives": [
+      "What model is used for document retrieval?",
+      "Which model performs document search?"
+    ],
+    "rewritten": true
+  },
+  "Which pre-trained model writes the answers?": {
+    "query": "Which pre-trained model writes the answers?",
+    "alternatives": [
+      "Which pre-trained model is used to generate the answers?",
+      "Which pre-trained model produces the responses?"
+    ],
+    "rewritten": true
+  },
+  "How was Wikipedia prepared to be used as the knowledge source?": {
+    "query": "How was Wikipedia prepared to be used as the knowledge source?",
+    "alternatives": [
+      "What steps were taken to prepare Wikipedia for use as a knowledge source?",
+      "How was Wikipedia processed for use as a knowledge base?"
+    ],
+    "rewritten": true
+  },
+  "Can the knowledge of the model be changed after training without retraining it?": {
+    "query": "Can the knowledge of a trained model be changed after training without retraining it?",
+    "alternatives": [
+      "Is it possible to modify a model's knowledge after training without retraining?",
+      "Can a model's knowledge be updated post-training without retraining?"
+    ],
+    "rewritten": true
+  },
+  "How many trainable parameters do the RAG models have in total?": {
+    "query": "How many trainable parameters do the Retrieval-Augmented Generation (RAG) models have in total?",
+    "alternatives": [
+      "What is the total number of trainable parameters in the RAG models?",
+      "How many parameters are trainable in the RAG models overall?"
+    ],
+    "rewritten": true
+  },
+  "Which optimizer was used for training?": {
+    "query": "Which optimizer was used for training?",
+    "alternatives": [
+      "What optimizer was used during training?",
+      "Which optimizer was employed for training?"
+    ],
+    "rewritten": true
+  },
+  "What is the main risk of retrieval-augmented generation?": {
+    "query": "What is the main risk of Retrieval-Augmented Generation (RAG)?",
+    "alternatives": [
+      "What is the primary risk associated with Retrieval-Augmented Generation?",
+      "What is the biggest risk of using Retrieval-Augmented Generation?"
+    ],
+    "rewritten": true
+  },
+  "How long is the warranty of the robot?": {
+    "query": "How long is the warranty of the robot?",
+    "alternatives": [
+      "What is the duration of the robot's warranty?",
+      "For how many months/years is the robot covered by warranty?"
+    ],
+    "rewritten": true
+  },
+  "How long does it take to fully charge Kito?": {
+    "query": "How long does it take to fully charge Kito?",
+    "alternatives": [
+      "What is the charging time for Kito?",
+      "How long does it take to fully charge the Kito device?"
+    ],
+    "rewritten": true
+  },
+  "How many days of holiday do employees get per year?": {
+    "query": "How many days of holiday do employees get per year?",
+    "alternatives": [
+      "What is the annual holiday entitlement for employees?",
+      "How many vacation days are granted to employees each year?"
+    ],
+    "rewritten": true
+  },
+  "What does error E31 mean?": {
+    "query": "What does error E31 mean?",
+    "alternatives": [
+      "What is the cause of error code E31?",
+      "How do I fix error E31?"
+    ],
+    "rewritten": true
+  },
+  "What should I do for error E47?": {
+    "query": "What should I do for error E47?",
+    "alternatives": [
+      "How can I resolve error E47?",
+      "What steps should I take to fix error E47?"
+    ],
+    "rewritten": true
+  },
+  "What does Equation 12 compute?": {
+    "query": "What does Equation 12 compute?",
+    "alternatives": [
+      "What is the purpose of Equation 12?",
+      "What does Equation 12 represent?"
+    ],
+    "rewritten": true
+  },
+  "What accuracy did BERT-base get?": {
+    "query": "What accuracy did BERT-base achieve?",
+    "alternatives": [
+      "What accuracy score did BERT-base obtain?",
+      "What is the accuracy of BERT-base?"
+    ],
+    "rewritten": true
+  },
+  "What is shown in Table 7?": {
+    "query": "What is shown in Table 7?",
+    "alternatives": [
+      "What information is presented in Table 7?",
+      "What does Table 7 display?"
+    ],
+    "rewritten": true
+  },
+  "What is MIPS?": {
+    "query": "What is MIPS?",
+    "alternatives": [
+      "What does MIPS stand for?",
+      "What does MIPS mean?"
+    ],
+    "rewritten": true
+  },
+  "Who founded Nova Robotics?": {
+    "query": "Who founded Nova Robotics?",
+    "alternatives": [
+      "Who is the founder of Nova Robotics?",
+      "Who founded the company Nova Robotics?"
+    ],
+    "rewritten": true
+  },
+  "Which dataset has 79169 training examples?": {
+    "query": "Which dataset has 79169 training examples?",
+    "alternatives": [
+      "Which dataset contains 79169 training samples?",
+      "Which dataset has 79,169 training instances?"
+    ],
+    "rewritten": true
+  },
+  "What is FAISS used for?": {
+    "query": "What is FAISS used for?",
+    "alternatives": [
+      "What is the purpose of FAISS?",
+      "How is FAISS used?"
+    ],
+    "rewritten": true
+  },
+  "What results did RAG-Token-BM25 get?": {
+    "query": "What results did RAG-Token-BM25 get?",
+    "alternatives": [
+      "What performance metrics were achieved by RAG-Token-BM25?",
+      "What outcomes were reported for RAG-Token-BM25?"
+    ],
+    "rewritten": true
+  },
+  "What does 15.3B refer to?": {
+    "query": "What does 15.3B refer to?",
+    "alternatives": [
+      "What does the term 15.3B mean?",
+      "What is the significance of 15.3B?"
+    ],
+    "rewritten": true
+  },
+  "How long does its battery last?": {
+    "query": "How long does Kito's battery last?",
+    "alternatives": [
+      "What is the battery life of Kito?",
+      "How long does the battery of Kito last?"
+    ],
+    "rewritten": true
+  },
+  "How was it initialized before training?": {
+    "query": "How was the DPR retriever initialized before training in RAG?",
+    "alternatives": [
+      "What initialization method was used for the DPR retriever before training in RAG?",
+      "How was the DPR retriever set up prior to training in RAG?"
+    ],
+    "rewritten": true
+  },
+  "And can I work from home?": {
+    "query": "Can I work from home?",
+    "alternatives": [
+      "Is working from home allowed?",
+      "Can I work remotely?"
+    ],
+    "rewritten": true
+  },
+  "How well did RAG do on it?": {
+    "query": "How well did Retrieval-Augmented Generation (RAG) perform on the FEVER task?",
+    "alternatives": [
+      "What was RAG's performance on the FEVER task?",
+      "How did RAG score on the FEVER task?"
+    ],
+    "rewritten": true
+  },
+  "Which one is the largest?": {
+    "query": "Which model is the largest among BERT-base, RoBERTa-large and DistilBERT?",
+    "alternatives": [
+      "Which of BERT-base, RoBERTa-large and DistilBERT has the greatest number of parameters?",
+      "Which model has the largest size: BERT-base, RoBERTa-large or DistilBERT?"
+    ],
+    "rewritten": true
+  },
+  "When can I contact their support?": {
+    "query": "When can I contact Nova Robotics support?",
+    "alternatives": [
+      "When is Nova Robotics support available?",
+      "What are the support hours for Nova Robotics?"
+    ],
+    "rewritten": true
+  }
+}
