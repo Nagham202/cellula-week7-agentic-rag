@@ -6,3 +6,7 @@ langchain-core
 langchain-text-splitters
 python-dotenv
 pytest
+langchain-groq
+langchain-openai  # OpenRouter (OpenAI-style API)
+langchain-ollama
+reportlab  # only for scripts/make_messy_pdf.py (test files)

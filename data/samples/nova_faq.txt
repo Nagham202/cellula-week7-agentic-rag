@@ -1,0 +1,18 @@
+Nova Robotics - Frequently Asked Questions
+
+Who founded Nova Robotics?
+Nova Robotics was founded in 2019 in the city of Port Elan by Lina Haddad (CEO) and Omar Saleh (CTO).
+
+What does Nova Robotics make?
+We make warehouse robots. Our main product is Kito, a robot that moves shelves inside warehouses.
+A smaller model, Kito Mini, is designed for small shops and carries up to 40 kg.
+
+When is customer support available?
+Support is available Sunday to Thursday, from 9:00 to 17:00 (Port Elan time).
+You can reach us at support@novarobotics.example.
+
+How long is the warranty?
+Every Kito robot comes with a 2-year warranty. Batteries are covered for 1 year only.
+
+Do you offer training?
+Yes. Every new customer gets a free 3-hour online training session for up to 5 employees.

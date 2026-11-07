@@ -1,99 +1,101 @@
-"""Public entry point of the Retriever Agent.
-
-Teammates call only these two functions:
-    retrieve(question, chat_history=None, top_k=6)        -> used by the Orchestrator
-    retrieve_more(query, already_seen_ids=None, top_k=4)  -> used by the Analyst (feedback loop)
-
-Both return a list of evidence items:
-    {"source": str, "page": int or None, "text": str, "score": float, "chunk_id": str}
-
-FAKE VERSION: returns hard-coded evidence so the Analyst and Answer agents can be
-built now. The real search will replace the function bodies; names and format stay the same.
-"""
-
 import config
-
-FAKE_EVIDENCE = [
-    {
-        "source": "rag.pdf",
-        "page": 5,
-        "text": "Source: rag.pdf, page 5\nRAG allows a model to access external knowledge at query time, "
-                "so its knowledge can be updated without retraining.",
-        "score": 0.94,
-        "chunk_id": "rag.pdf_p5_c1",
-    },
-    {
-        "source": "rag.pdf",
-        "page": 8,
-        "text": "Source: rag.pdf, page 8\nA disadvantage of RAG is that answer quality depends on "
-                "retrieval quality: if the wrong chunks are retrieved, the answer is wrong.",
-        "score": 0.91,
-        "chunk_id": "rag.pdf_p8_c3",
-    },
-    {
-        "source": "paper_a.pdf",
-        "page": 4,
-        "text": "Source: paper_a.pdf, page 4\nTable 2: The CNN model reached an accuracy of 92% on the test set.",
-        "score": 0.88,
-        "chunk_id": "paper_a.pdf_p4_c2",
-    },
-    {
-        "source": "paper_b.pdf",
-        "page": 6,
-        "text": "Source: paper_b.pdf, page 6\nOur CNN achieves 95% accuracy, outperforming previous work.",
-        "score": 0.86,
-        "chunk_id": "paper_b.pdf_p6_c1",
-    },
-    {
-        "source": "paper_c.pdf",
-        "page": 3,
-        "text": "Source: paper_c.pdf, page 3\nThe CNN baseline obtained 89% accuracy.",
-        "score": 0.83,
-        "chunk_id": "paper_c.pdf_p3_c4",
-    },
-    {
-        "source": "notes.docx",
-        "page": None,
-        "text": "Source: notes.docx\nFine-tuning changes the model weights, while RAG keeps the model "
-                "fixed and changes the documents it reads.",
-        "score": 0.80,
-        "chunk_id": "notes.docx_c2",
-    },
-    {
-        "source": "paper_a.pdf",
-        "page": 7,
-        "text": "Source: paper_a.pdf, page 7\nThe CNN has 1.2 million parameters and needs 0.6 GFLOPs per image.",
-        "score": 0.75,
-        "chunk_id": "paper_a.pdf_p7_c1",
-    },
-]
+from src.pipeline.store import list_sources
+from src.retriever.filters import build_filter, extract_filters, relax_filters
+from src.retriever.query_rewriter import no_rewrite, rewrite_query
+from src.retriever.reranker import rerank
+from src.retriever.search import hybrid_search
+from src.retriever.selector import select_context
 
 
-def retrieve(question, chat_history=None, top_k=config.TOP_K):
-    """Return the top_k evidence items for the question (fake for now)."""
-    return FAKE_EVIDENCE[:top_k]
+def search_with_fallback(query, filters, top_k, exclude_chunk_ids=None, extra_queries=None):
+    evidence = hybrid_search(query, top_k=top_k, query_filter=build_filter(filters, exclude_chunk_ids),
+                             extra_queries=extra_queries)
+    filters_relaxed = False
+
+    # e.g. "page 2" of a docx, which has no pages, so try again with just the file names
+    if not evidence and filters:
+        relaxed = relax_filters(filters)
+        if relaxed != filters:
+            evidence = hybrid_search(query, top_k=top_k, query_filter=build_filter(relaxed, exclude_chunk_ids),
+                                     extra_queries=extra_queries)
+            filters_relaxed = True
+    return evidence, filters_relaxed
+
+
+def rerank_and_select(query, candidates, top_k, filters):
+    if config.USE_RERANKER:
+        candidates = rerank(query, candidates)
+    # a comparison question needs evidence from every file it names
+    must_cover_sources = None
+    if filters and len(filters.get("sources", [])) > 1:
+        must_cover_sources = filters["sources"]
+    return select_context(candidates, top_k=top_k, must_cover_sources=must_cover_sources)
+
+
+def retrieve_with_details(question, chat_history=None, top_k=config.TOP_K, filters=None):
+    if config.USE_QUERY_REWRITER:
+        rewrite = rewrite_query(question, chat_history)
+    else:
+        rewrite = no_rewrite(question)
+
+    # the original question is searched too, in case the rewrite went wrong
+    extra_queries = list(rewrite["alternatives"])
+    if question != rewrite["query"]:
+        extra_queries.append(question)
+
+    # the file name might only be in the chat history, so the rewrite is checked too
+    if filters is None:
+        filters = extract_filters(question + " " + rewrite["query"], list_sources())
+
+    # more candidates than needed, so the reranker and the selector have something to choose from
+    candidates, filters_relaxed = search_with_fallback(rewrite["query"], filters, config.RERANK_CANDIDATES,
+                                                       extra_queries=extra_queries)
+    evidence = rerank_and_select(rewrite["query"], candidates, top_k, filters)
+    return {
+        "evidence": evidence,
+        "search_query": rewrite["query"],
+        "alternative_queries": rewrite["alternatives"],
+        "rewritten": rewrite["rewritten"],
+        "filters": filters,
+        "filters_relaxed": filters_relaxed,
+    }
+
+
+def retrieve(question, chat_history=None, top_k=config.TOP_K, filters=None):
+    return retrieve_with_details(question, chat_history, top_k, filters)["evidence"]
 
 
 def retrieve_more(query, already_seen_ids=None, top_k=4):
-    """Return up to top_k NEW evidence items the Analyst hasn't seen yet (fake for now)."""
-    if already_seen_ids is None:
-        already_seen_ids = []
-
-    new_items = []
-    for item in FAKE_EVIDENCE:
-        if item["chunk_id"] not in already_seen_ids:
-            new_items.append(item)
-    return new_items[:top_k]
+    # no rewriter here, the analyst's query is already specific
+    filters = extract_filters(query, list_sources())
+    candidates, _ = search_with_fallback(query, filters, config.RERANK_CANDIDATES, exclude_chunk_ids=already_seen_ids)
+    return rerank_and_select(query, candidates, top_k, filters)
 
 
+# quick test: python -m src.retriever.retriever (run python -m src.pipeline.ingest first)
 if __name__ == "__main__":
-    first = retrieve("What is the average CNN accuracy?")
-    print("retrieve() returned", len(first), "items:")
-    for item in first:
-        print(" ", item["chunk_id"], item["score"])
+    def show(evidence_list):
+        for evidence in evidence_list:
+            print(f"    {evidence['score']:.3f}  {evidence['chunk_id']:26s} section: {evidence['section']}")
 
-    seen = [item["chunk_id"] for item in first]
-    more = retrieve_more("CNN computational complexity", already_seen_ids=seen)
-    print("retrieve_more() returned", len(more), "new items:")
-    for item in more:
-        print(" ", item["chunk_id"], item["score"])
+    question = "How does RAG do on fact verification?"
+    print(f"=== retrieve: {question}")
+    first = retrieve(question)
+    show(first)
+
+    seen = [evidence["chunk_id"] for evidence in first]
+    print("\n=== retrieve_more: 'FEVER label accuracy of RAG compared to BART' (leaving out the 6 above)")
+    more = retrieve_more("FEVER label accuracy of RAG compared to BART", already_seen_ids=seen)
+    show(more)
+    print("    new chunks only:", not set(seen) & {evidence["chunk_id"] for evidence in more})
+
+    print("\n=== retrieve_with_details: page 2 of hr_policy.docx (DOCX has no pages)")
+    details = retrieve_with_details("What does page 2 of hr_policy.docx say about leave?", top_k=2)
+    print(f"    filters: {details['filters']}, relaxed: {details['filters_relaxed']}")
+    show(details["evidence"])
+
+    print("\n=== retrieve with a filter from the app: only messy_report.pdf")
+    show(retrieve("Which model is the best?", top_k=2, filters={"sources": ["messy_report.pdf"]}))
+
+    print("\n=== comparison question: both files must be covered")
+    show(retrieve("Compare kito_manual.pdf and rag_paper.pdf: what are their main topics?", top_k=4))
