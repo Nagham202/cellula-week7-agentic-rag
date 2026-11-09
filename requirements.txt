@@ -6,6 +6,7 @@ langchain-core
 langchain-text-splitters
 python-dotenv
 pytest
+langchain
 langchain-groq
 langchain-openai  # OpenRouter (OpenAI-style API)
 langchain-ollama
