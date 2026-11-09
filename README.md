@@ -7,8 +7,8 @@ questions. An Orchestrator coordinates three agents: the **Retriever** finds evi
 | Part | Owner | Folder |
 |---|---|---|
 | Document pipeline + Retriever Agent | Nagham | `src/pipeline/`, `src/retriever/` |
-| Analyst Agent | | `src/analyst/` |
-| Answer Agent, Orchestrator, Streamlit app | | `src/answer/`, `app.py` |
+| Analyst Agent, Orchestrator, | Sara | `src/analyst/` |
+| Answer Agent, Streamlit app | | `src/answer/`, `app.py` |
 | Shared | everyone | `config.py`, `src/llm.py` |
 
 ## Setup
