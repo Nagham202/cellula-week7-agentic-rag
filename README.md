@@ -8,7 +8,7 @@ questions. An Orchestrator coordinates three agents: the **Retriever** finds evi
 |---|---|---|
 | Document pipeline + Retriever Agent | Nagham | `src/pipeline/`, `src/retriever/` |
 | Analyst Agent, Orchestrator | Sara | `src/analyst/` |
-| Answer Agent, Streamlit app | | `src/answer/`, `app.py` |
+| Answer Agent, Streamlit app | Heba | `src/answer/`, `src/chat_graph.py`, `app.py` |
 | Shared | everyone | `config.py`, `src/llm.py` |
 
 ## Setup
@@ -161,3 +161,37 @@ python -m eval.compare_rerankers       # 3 reranker models, quality and speed
 
 Results (28 test questions, right document and page in the top 3): semantic 0.82, keyword 0.86,
 hybrid 0.89, hybrid + query rewriter 0.93, full pipeline 0.96. Details in `eval/results/` and `report_notes.md`.
+
+## Answer Agent + Streamlit app (Heba)
+
+### What it does
+
+```
+question -> run_analysis (Retriever + Analyst) -> Answer Agent -> final answer with citations
+```
+
+The full flow is a small LangGraph graph in `src/chat_graph.py` with two nodes: `analyze` calls Sara's
+`run_analysis`, and `answer` calls the Answer Agent. Its state holds the question, the chat history,
+the search query, the evidence, the analysis, the answer and the sources.
+
+### Using it
+
+```python
+from src.chat_graph import ask
+
+reply = ask(question, chat_history)   # {"answer": "...", "sources": ["kito_manual.pdf, page 1"]}
+```
+
+Run the app with `python -m streamlit run app.py`. Close it before running the tests or any script,
+because Qdrant allows only one program at a time.
+
+### How the citations work
+
+- The model gets the evidence numbered `[1]`, `[2]`... and cites with these numbers.
+- `src/answer/formatters.py` turns each number into its real source (`[kito_manual.pdf, page 1]`, or only
+  the file name for DOCX and TXT), lists only the sources the answer used, and adds them under "Sources:".
+- gpt-oss models often write `【1】` instead of `[1]`, so these brackets are changed before formatting.
+- If the evidence does not answer the question, the model replies `NOT_FOUND` and the user sees a fixed
+  message with no sources.
+- A follow-up like "How do I fix it?" reaches the Answer Agent as the full question written by the
+  query rewriter (`search_query`).
