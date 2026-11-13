@@ -17,10 +17,17 @@ questions. An Orchestrator coordinates three agents: the **Retriever** finds evi
 python3.12 -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
-cp .env.example .env              # then put your own GROQ_API_KEY and OPENROUTER_API_KEY in .env
+cp .env.example .env              # then put your own GROQ_API_KEY in .env (OPENROUTER_API_KEY is optional)
 python -m src.llm                 # checks groq, openrouter and ollama with one short call each
 python -m src.pipeline.ingest     # builds your local database from data/samples (about 5 s)
+python -m streamlit run app.py    # starts the app
 ```
+
+On Windows (PowerShell): `py -3.12 -m venv .venv`, then `.venv\Scripts\activate` and `copy .env.example .env`.
+Python 3.13 also works.
+
+Only the Groq key is required. In `python -m src.llm`, a failed ollama check is fine if Ollama is not
+installed: it is only the last backup.
 
 Always run scripts from the project folder with `python -m ...`, so `config` and `src` can be found.
 The first run downloads three small local models (embeddings 67 MB, BM25, reranker 80 MB).
@@ -153,7 +160,7 @@ from src.retriever.fake_retriever import retrieve, retrieve_more   # same functi
 ### Checks
 
 ```bash
-python -m pytest -q                    # 50 tests, no LLM calls
+python -m pytest -q                    # all 72 tests (Sara's analyst tests call the LLM and need the database)
 python -m scripts.check_end_to_end     # upload -> ask -> re-upload -> delete (3 LLM calls)
 python -m eval.compare_search          # semantic vs keyword vs hybrid vs rewriter vs reranker
 python -m eval.compare_rerankers       # 3 reranker models, quality and speed
@@ -195,3 +202,11 @@ because Qdrant allows only one program at a time.
   message with no sources.
 - A follow-up like "How do I fix it?" reaches the Answer Agent as the full question written by the
   query rewriter (`search_query`).
+
+### Checks
+
+```bash
+python -m src.answer.answer_agent      # two real questions: one answered with sources, one not found
+python -m src.chat_graph               # a question and a follow-up through the whole graph
+python -m pytest tests/test_formatters.py tests/test_answer_agent.py tests/test_chat_graph.py   # 17 tests, no LLM calls
+```
