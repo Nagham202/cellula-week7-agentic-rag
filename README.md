@@ -16,6 +16,26 @@ An Orchestrator coordinates the agents, while LangGraph manages the workflow and
 
 ---
 
+## Application Screenshots
+
+The application provides an interactive Streamlit interface where users can upload documents, manage their knowledge base, and ask questions about their uploaded files.
+
+### Main Interface
+
+<p align="center">
+  <img src="docs/images/application-screenshot.png" alt="Agentic RAG Application Interface" width="850">
+</p>
+
+*Main interface showing document upload, stored files, and the chat interface.*
+
+### Document-Based Question Answering
+
+<p align="center">
+  <img src="docs/images/chat-screenshot.png" alt="Document Question Answering" width="850">
+</p>
+
+*Example of the system answering a question using retrieved document evidence and citations.*
+
 ## Features
 
 - Upload PDF, DOCX, and TXT documents.
